@@ -1,23 +1,26 @@
 const User = require("../models/User");
 
 class UserController {
-  constructor() {}
-
   async register(req, res, next) {
     try {
-      const { email, password } = req.body;
+      const { first_name, last_name, phone, email, password } = req.body;
 
-      if (!email || !password) {
+      if (!email || !password || !first_name || !last_name || !phone) {
         throw new Error("Missing inputs");
       }
 
-      const user = new User({ email, password });
+      const user = await User.findOne({ email });
 
-      user.save();
+      if (user) {
+        throw new Error(`User with email ${email} exists!`);
+      }
+
+      await User({ first_name, last_name, phone, email, password }).save();
 
       res.json({
-        message: user ? "Register success, please login!" : "Register fail!",
+        message: "Register success, please login!",
       });
+      
     } catch (error) {
       next(error);
     }
