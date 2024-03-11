@@ -9,7 +9,7 @@ const UserModel = new Schema(
     email: { type: String, require: true },
     password: { type: String, require: true },
     address: { type: String },
-    phone: { type: Number, require: true },
+    phone: { type: String, require: true },
     avatar: { type: String },
     refresh_token: { type: String },
   },
