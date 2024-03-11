@@ -24,4 +24,11 @@ UserModel.pre("save", async function () {
   this.password = passwordHashed;
 });
 
+UserModel.methods = {
+  isCorrectPassword: async function (password) {
+    const result = await bcrypt.compare(password, this.password);
+    return result;
+  },
+};
+
 module.exports = mongoose.model("User", UserModel);
