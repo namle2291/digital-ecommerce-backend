@@ -15,13 +15,28 @@ const UserModel = new Schema(
   },
   { timestamps: true }
 );
-
-UserModel.pre("save", async function () {
+// Hash password trước khi save
+UserModel.pre("save", async function (next) {
+  try {
+    const passwordHashed = await bcrypt.hash(
+      this.password,
+      +process.env.saltRounds
+    );
+    this.password = passwordHashed;
+  } catch (error) {
+    next(error);
+  }
+});
+// Hash password trước khi update
+UserModel.pre("findOneAndUpdate", async function (next) {
+  if (!this._update.password) {
+    return next();
+  }
   const passwordHashed = await bcrypt.hash(
-    this.password,
+    this._update.password,
     +process.env.saltRounds
   );
-  this.password = passwordHashed;
+  this._update.password = passwordHashed;
 });
 
 UserModel.methods = {

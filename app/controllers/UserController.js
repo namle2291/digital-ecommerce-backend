@@ -63,7 +63,31 @@ class UserController {
       const user = await User.findOne({ _id }).select(
         "-password -createdAt -updatedAt"
       );
+
+      if (!user) {
+        res.json({ message: "User not found!" });
+      }
+
       res.json({ success: true, data: user });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Update current user
+  async updateCurrentUser(req, res, next) {
+    try {
+      const data = req.body;
+      const { _id } = req.user;
+
+      const user = await User.findOneAndUpdate({ _id }, data, {
+        new: true,
+      });
+
+      res.json({
+        success: user ? true : false,
+        message: `User with email ${user.email} updated!`,
+        user,
+      });
     } catch (error) {
       next(error);
     }
