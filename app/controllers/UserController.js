@@ -51,7 +51,19 @@ class UserController {
       res.json({
         message: "Login fail!",
       });
-      
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Get current user
+  async getCurrent(req, res, next) {
+    try {
+      const { _id } = req.user;
+
+      const user = await User.findOne({ _id }).select(
+        "-password -createdAt -updatedAt"
+      );
+      res.json({ success: true, data: user });
     } catch (error) {
       next(error);
     }

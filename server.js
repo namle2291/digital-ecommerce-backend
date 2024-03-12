@@ -2,11 +2,14 @@ const express = require("express");
 const router = require("./routes");
 const connectDB = require("./config/database");
 const bodyParse = require("body-parser");
-require("dotenv").config();
-
+const cookieParser = require('cookie-parser');
 const app = express();
 const port = 5000;
+
+require("dotenv").config();
+
 // Config
+app.use(cookieParser());
 app.use(bodyParse.json());
 app.use(
   bodyParse.urlencoded({
