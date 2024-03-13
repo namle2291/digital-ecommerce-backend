@@ -41,10 +41,15 @@ class UserController {
       }
 
       if (user && (await user.isCorrectPassword(password))) {
-        const token = genarateToken({ _id: user._id });
+        const payload = { _id: user._id, userType: user?.userType };
+        const token = genarateToken(payload);
         res.json({
           message: "Login success!",
           access_token: token,
+        });
+      } else {
+        res.json({
+          message: "Login fail!",
         });
       }
     } catch (error) {
