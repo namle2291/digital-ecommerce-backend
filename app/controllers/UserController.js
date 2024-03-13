@@ -138,6 +138,39 @@ class UserController {
       next(error);
     }
   }
+  // Update user
+  async update(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { ...data } = req.body;
+
+      await User.findByIdAndUpdate(id, data, { new: true }).then((u) => {
+        res.json({
+          success: true,
+          message: `User with email ${u.email} updated!`,
+        });
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Delete user
+  async delete(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const user = await User.findByIdAndDelete(id);
+
+      res.json({
+        success: user ? true : false,
+        message: user
+          ? `User with email ${user.email} deleted!`
+          : "Something went wrong!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new UserController();

@@ -9,7 +9,6 @@ function verifyToken(req, res, next) {
       if (err) next(err);
 
       const { _id, userType } = decoded;
-
       req.user = { _id, userType };
       next();
     });
