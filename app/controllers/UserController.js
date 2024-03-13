@@ -1,6 +1,7 @@
 const User = require("../models/User");
 
-const { genarateToken } = require("../jwt/jwt");
+const { generateToken } = require("../jwt/jwt");
+const sendMail = require("../../config/mailer");
 
 class UserController {
   // Register
@@ -42,7 +43,7 @@ class UserController {
 
       if (user && (await user.isCorrectPassword(password))) {
         const payload = { _id: user._id, userType: user?.userType };
-        const token = genarateToken(payload);
+        const token = generateToken(payload);
         res.json({
           message: "Login success!",
           access_token: token,
@@ -166,6 +167,67 @@ class UserController {
         message: user
           ? `User with email ${user.email} deleted!`
           : "Something went wrong!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Reset Password
+  async forgotPassword(req, res, next) {
+    try {
+      const { email } = req.body;
+
+      if (!email) throw Error("Missing email!");
+
+      const user = await User.findOne({ email });
+
+      if (!user) throw Error("User not found!");
+
+      // Update field reset_password_token
+      user.updateResetPasswordToken();
+
+      await user.save();
+
+      const html = `<span>Vui lòng click vào đường link sau
+       đây để cập nhật mật khẩu <a href='${process.env.SERVER_URL}/reset-password?token=${user.password_reset_token}'>
+       Click me</a>, đường link này có hiệu lực 15'</span>`;
+
+      const subject = "Reset your password";
+
+      sendMail({ email, html, subject });
+
+      res.json({
+        success: user ? true : false,
+        message: "Please check your email!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Reset password
+  async resetPassword(req, res, next) {
+    try {
+      const { password, token } = req.body;
+
+      const user = await User.findOne({ password_reset_token: token });
+
+      if (!user) throw Error("Reset token invalid!");
+
+      if (
+        user.password_reset_expires &&
+        user.password_reset_expires < Date.now()
+      ) {
+        throw Error("Token exprised!");
+      }
+
+      user.password = password;
+      user.password_reset_token = "";
+      user.password_reset_expires = "";
+      user.save();
+
+      res.json({
+        user,
+        message: "Your password updated!",
       });
     } catch (error) {
       next(error);
