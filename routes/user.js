@@ -11,7 +11,9 @@ router.post("/register", UserController.register);
 router.post("/login", UserController.login);
 
 router.put("/me", verifyToken, UserController.updateCurrentUser);
-// CRUD
+// Admin
+router.post("/forgot-password", UserController.forgotPassword);
+router.put("/reset-password", UserController.resetPassword);
 router.post("/create", verifyToken, isAdmin, UserController.create);
 router.put("/:id", verifyToken, isAdmin, UserController.update);
 router.delete("/:id", verifyToken, isAdmin, UserController.delete);

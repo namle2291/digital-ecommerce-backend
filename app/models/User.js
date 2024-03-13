@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const crypto = require("crypto");
 
 const UserModel = new Schema(
   {
@@ -17,6 +18,8 @@ const UserModel = new Schema(
       default: "user",
     },
     refresh_token: { type: String },
+    password_reset_token: { type: String },
+    password_reset_expires: { type: Date },
   },
   { timestamps: true }
 );
@@ -48,6 +51,10 @@ UserModel.methods = {
   isCorrectPassword: async function (password) {
     const result = await bcrypt.compare(password, this.password);
     return result;
+  },
+  updateResetPasswordToken: function () {
+    this.password_reset_token = crypto.randomBytes(48).toString("hex");
+    this.password_reset_expires = Date.now() + 15 * 60 * 1000;
   },
 };
 
