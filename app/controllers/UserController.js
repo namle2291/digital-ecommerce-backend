@@ -47,10 +47,6 @@ class UserController {
           access_token: token,
         });
       }
-
-      res.json({
-        message: "Login fail!",
-      });
     } catch (error) {
       next(error);
     }
@@ -76,7 +72,8 @@ class UserController {
   // Update current user
   async updateCurrentUser(req, res, next) {
     try {
-      const data = req.body;
+      const { userType, ...data } = req.body;
+
       const { _id } = req.user;
 
       const user = await User.findOneAndUpdate({ _id }, data, {
@@ -86,7 +83,51 @@ class UserController {
       res.json({
         success: user ? true : false,
         message: `User with email ${user.email} updated!`,
-        user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Get all user
+  async getAll(req, res, next) {
+    try {
+      const users = await User.find().select("-password");
+
+      res.json({
+        success: users ? true : false,
+        data: users,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // create new user
+  async create(req, res, next) {
+    try {
+      const { first_name, last_name, phone, email, password } = req.body;
+
+      if (!email || !password || !first_name || !last_name || !phone) {
+        throw new Error("Missing inputs");
+      }
+
+      const checkUser = await User.findOne({ email, phone });
+
+      if (checkUser) {
+        throw new Error(`User with email ${email} exists!`);
+      }
+
+      const user = await User({
+        first_name,
+        last_name,
+        phone,
+        email,
+        password,
+      }).save();
+
+      res.json({
+        message: user
+          ? `User with email ${email} created!`
+          : "Something went wrong!",
       });
     } catch (error) {
       next(error);

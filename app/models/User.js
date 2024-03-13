@@ -6,11 +6,16 @@ const UserModel = new Schema(
   {
     first_name: { type: String, require: true },
     last_name: { type: String, require: true },
-    email: { type: String, require: true },
+    email: { type: String, require: true, unique: true },
     password: { type: String, require: true },
     address: { type: String },
-    phone: { type: String, require: true },
+    phone: { type: String, require: true, unique: true },
     avatar: { type: String },
+    userType: {
+      type: String,
+      enum: ["user", "admin", "employee"],
+      default: "user",
+    },
     refresh_token: { type: String },
   },
   { timestamps: true }

@@ -6,7 +6,7 @@ const homeRouter = require("./home");
 const userRouter = require("./user");
 
 app.use("/home", homeRouter);
-app.use("/auth", userRouter);
+app.use("/users", userRouter);
 
 // Handler Error
 app.use(notFoundHandler);
