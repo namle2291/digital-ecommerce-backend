@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../app/middlewares/verifyToken");
+const isAdmin = require("../app/middlewares/isAdmin");
 
 const UserController = require("../app/controllers/UserController");
 
-router.get("/", verifyToken, UserController.getAll);
 
 router.get("/me", verifyToken, UserController.getCurrent);
 
@@ -13,6 +13,8 @@ router.post("/login", UserController.login);
 
 router.put("/me", verifyToken, UserController.updateCurrentUser);
 // CRUD
-router.post("/create", UserController.create);
+router.post("/create", verifyToken, isAdmin, UserController.create);
+router.get("/", verifyToken, UserController.getAll);
+
 
 module.exports = router;
