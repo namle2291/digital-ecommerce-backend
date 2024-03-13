@@ -1,7 +1,8 @@
 const isAdmin = (req, res, next) => {
   const { userType } = req.user;
-  if (userType == "admin") {
+  if (userType === "admin") {
     next();
+    return;
   }
   res.json({
     success: false,
