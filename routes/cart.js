@@ -5,5 +5,6 @@ const isAdmin = require("../app/middlewares/isAdmin");
 const CartController = require("../app/controllers/CartController");
 
 router.post("/", verifyToken, CartController.add);
+router.put("/", verifyToken, CartController.update);
 
 module.exports = router;

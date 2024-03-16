@@ -1,6 +1,7 @@
 const User = require("../models/User");
 
 class CartController {
+  // Add to cart
   async add(req, res, next) {
     try {
       const { _id } = req.user;
@@ -13,7 +14,7 @@ class CartController {
         color,
       } = req.body;
 
-      if (!product && !title && !price && !quantity && !thumbnail && !color)
+      if (!product || !title || !price || !quantity || !thumbnail || !color)
         throw Error("Missing inputs!");
 
       const user = await User.findById(_id);
@@ -55,6 +56,33 @@ class CartController {
           productExists && productColorExists
             ? "Updated quantity!"
             : "Add to cart success!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  //   Update
+  async update(req, res, next) {
+    try {
+      const { _id } = req.user;
+
+      const { product, quantity, color } = req.body;
+
+      if (!product || !quantity) throw Error("Missing inputs!");
+
+      await User.findOneAndUpdate(
+        {
+          _id,
+          cart: { $elemMatch: { product, color } },
+        },
+        {
+          $set: { "cart.$.quantity": quantity },
+        }
+      );
+
+      res.json({
+        success: true,
+        message: "Update quantity success!",
       });
     } catch (error) {
       next(error);
