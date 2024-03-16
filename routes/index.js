@@ -5,10 +5,12 @@ const { notFoundHandler, handlerError } = require("../app/exceptions/handler");
 const homeRouter = require("./home");
 const userRouter = require("./user");
 const categoryRouter = require("./category");
+const productRouter = require("./product");
 
 app.use("/home", homeRouter);
 app.use("/users", userRouter);
 app.use("/categories", categoryRouter);
+app.use("/products", productRouter);
 
 // Handler Error
 app.use(notFoundHandler);
