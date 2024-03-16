@@ -217,6 +217,8 @@ class UserController {
         user.password_reset_expires &&
         user.password_reset_expires < Date.now()
       ) {
+        user.password_reset_token = "";
+        user.password_reset_expires = "";
         throw Error("Token exprised!");
       }
 
@@ -226,7 +228,6 @@ class UserController {
       user.save();
 
       res.json({
-        user,
         message: "Your password updated!",
       });
     } catch (error) {

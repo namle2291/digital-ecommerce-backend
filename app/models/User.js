@@ -12,6 +12,19 @@ const UserModel = new Schema(
     address: { type: String },
     phone: { type: String, require: true, unique: true },
     avatar: { type: String },
+    cart: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+        title: { type: String },
+        quantity: { type: Number },
+        price: { type: Number },
+        color: { type: String },
+        thumbnail: { type: String },
+      },
+    ],
     userType: {
       type: String,
       enum: ["user", "admin", "employee"],

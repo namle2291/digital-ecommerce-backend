@@ -8,8 +8,18 @@ const ProductController = require("../app/controllers/ProductController");
 
 router.get("/", ProductController.getAll);
 
-router.post("/", uploadCloud.single("thumbnail"), ProductController.add);
-router.put("/:id", uploadCloud.single("thumbnail"), ProductController.update);
-router.delete("/:id", ProductController.delete);
+router.post(
+  "/",
+  verifyToken,
+  uploadCloud.single("thumbnail"),
+  ProductController.add
+);
+router.put(
+  "/:id",
+  verifyToken,
+  uploadCloud.single("thumbnail"),
+  ProductController.update
+);
+router.delete("/:id", verifyToken, ProductController.delete);
 
 module.exports = router;
