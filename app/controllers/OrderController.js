@@ -49,6 +49,22 @@ class OrderController {
   // Update
   async update(req, res, next) {
     try {
+      const { _id } = req.user;
+      const { order_id } = req.params;
+      const { status } = req.body;
+
+      if (!status) throw Error("Missing inputs!");
+
+      await Order.findByIdAndUpdate(
+        order_id,
+        { status, employee_id: _id },
+        { runValidators: true }
+      );
+
+      res.json({
+        status: true,
+        message: "Update order success!",
+      });
     } catch (error) {
       next(error);
     }
