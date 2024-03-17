@@ -3,13 +3,10 @@ const { Schema } = mongoose;
 
 const orderModal = new Schema(
   {
-    orderBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    totalPrice: { type: Number },
-    status: {
-      type: String,
-      default: "Processing",
-      enum: ["Processing", "Canceled", "Successed"],
-    },
+    order_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    total_price: { type: Number, require: true, default: 0 },
+    payment_method: { type: String, default: "COD", require: true },
+    ship_address: { type: String, require: true },
     products: [
       {
         product: {
@@ -23,6 +20,11 @@ const orderModal = new Schema(
         thumbnail: { type: String },
       },
     ],
+    status: {
+      type: String,
+      default: "Processing",
+      enum: ["Processing", "Canceled", "Successed"],
+    },
   },
   {
     timestamps: true,

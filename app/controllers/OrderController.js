@@ -14,14 +14,33 @@ class OrderController {
     try {
       const { _id } = req.user;
 
+      const { payment_method, ship_address } = req.body;
+
+      if (!payment_method || !ship_address) {
+        throw Error("Missing inputs!");
+      }
+
       const user = await User.findById(_id);
 
-      if (!user) throw Error("User not found!");
+      const totalPrice = user?.cart?.reduce((prev, item) => {
+        return prev + item.quantity * item.price;
+      }, 0);
 
-      const order = await new Order(data).save();
+      const order = await new Order({
+        order_by: _id,
+        total_price: totalPrice,
+        payment_method,
+        ship_address,
+        products: user?.cart,
+      }).save();
+
+      if (order) {
+        await User.findByIdAndUpdate(_id, { cart: [] });
+      }
 
       res.json({
-        order,
+        success: true,
+        message: "Thank you for your order!",
       });
     } catch (error) {
       next(error);
