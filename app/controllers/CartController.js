@@ -118,6 +118,21 @@ class CartController {
       next(error);
     }
   }
+  // Delete All
+  async deleteAll(req, res, next) {
+    try {
+      const { _id } = req.user;
+
+      const user = await User.findByIdAndUpdate(_id, { cart: [] });
+
+      res.json({
+        success: true,
+        message: "Your cart is empty!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new CartController();
