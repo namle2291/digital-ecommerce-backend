@@ -88,6 +88,36 @@ class CartController {
       next(error);
     }
   }
+  // Delete
+  async delete(req, res, next) {
+    try {
+      const { _id } = req.user;
+      const { product, color } = req.body;
+
+      if (!product || !color) throw Error("Missing inputs!");
+
+      const user = await User.findById(_id);
+
+      const productExists = user?.cart?.some(
+        (item) =>
+          item?.product?.toString() === product.toString() &&
+          item?.color?.toString() === color.toString()
+      );
+
+      if (!productExists) throw Error("Product not found!");
+
+      await user.updateOne({
+        $pull: { cart: { product, color } },
+      });
+
+      res.json({
+        success: true,
+        message: "Delete success",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new CartController();
