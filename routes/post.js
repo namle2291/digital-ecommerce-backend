@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../app/middlewares/verifyToken");
 const isAdmin = require("../app/middlewares/isAdmin");
-const PostCategory = require("../app/controllers/PostCategoryController");
+const PostController = require("../app/controllers/PostController");
 
-router.get("/", verifyToken, PostCategory.getAll);
-router.post("/", verifyToken, PostCategory.add);
-router.put("/:id", verifyToken, PostCategory.update);
-router.delete("/:id", verifyToken, PostCategory.delete);
+router.get("/", verifyToken, PostController.getAll);
+router.post("/", verifyToken, PostController.add);
+router.put("/:id", verifyToken, PostController.update);
+router.delete("/:id", verifyToken, PostController.delete);
 
 module.exports = router;

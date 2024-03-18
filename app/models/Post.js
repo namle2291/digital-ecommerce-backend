@@ -3,13 +3,14 @@ const { Schema } = mongoose;
 
 const postModal = new Schema(
   {
-    title: { type: Stringm, require: true },
+    title: { type: String, require: true },
     thumbnail: { type: String },
     likes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
-    author: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+    author: { type: mongoose.Types.ObjectId, ref: "User" },
+    category: { type: mongoose.Types.ObjectId, ref: "Post_Category" },
     viewCount: { type: Number, default: 0 },
-    description: { type: Stringm, require: true },
+    description: { type: String, require: true },
   },
   { timestamps: true }
 );
