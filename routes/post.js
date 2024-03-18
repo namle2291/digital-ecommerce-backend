@@ -6,6 +6,8 @@ const PostController = require("../app/controllers/PostController");
 
 router.get("/", verifyToken, PostController.getAll);
 router.post("/", verifyToken, PostController.add);
+router.put("/:id/like", verifyToken, PostController.like);
+router.put("/:id/dislike", verifyToken, PostController.dislike);
 router.put("/:id", verifyToken, PostController.update);
 router.delete("/:id", verifyToken, PostController.delete);
 

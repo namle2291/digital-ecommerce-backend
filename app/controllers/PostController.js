@@ -69,6 +69,66 @@ class PostController {
       next(error);
     }
   }
+  // Like post
+  async like(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { _id } = req.user;
+
+      if (!id) throw Error("Missing inputs!");
+
+      const post = await Post.findById(id);
+
+      const userLiked = post.likes.some(
+        (item) => item.toString() === _id.toString()
+      );
+
+      if (userLiked) {
+        await Post.findByIdAndUpdate(id, { $pull: { likes: _id } });
+      } else {
+        await Post.findByIdAndUpdate(id, {
+          $push: { likes: _id },
+          $pull: { dislikes: _id },
+        });
+      }
+
+      res.json({
+        success: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Dislike post
+  async dislike(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { _id } = req.user;
+
+      if (!id) throw Error("Missing inputs!");
+
+      const post = await Post.findById(id);
+
+      const userDisLiked = post.dislikes.some(
+        (item) => item.toString() === _id.toString()
+      );
+
+      if (userDisLiked) {
+        await Post.findByIdAndUpdate(id, { $pull: { dislikes: _id } });
+      } else {
+        await Post.findByIdAndUpdate(id, {
+          $push: { dislikes: _id },
+          $pull: { likes: _id },
+        });
+      }
+
+      res.json({
+        success: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new PostController();
