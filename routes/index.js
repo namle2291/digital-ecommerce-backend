@@ -8,6 +8,7 @@ const categoryRouter = require("./category");
 const productRouter = require("./product");
 const orderRouter = require("./order");
 const cartRouter = require("./cart");
+const postCategoryRouter = require("./postCategory");
 
 app.use("/home", homeRouter);
 app.use("/users", userRouter);
@@ -15,6 +16,7 @@ app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
 app.use("/orders", orderRouter);
 app.use("/cart", cartRouter);
+app.use("/post-category", postCategoryRouter);
 
 // Handler Error
 app.use(notFoundHandler);
