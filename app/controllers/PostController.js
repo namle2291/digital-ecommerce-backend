@@ -4,7 +4,8 @@ class PostController {
   // Get All
   async getAll(req, res, next) {
     try {
-      res.json({});
+      const result = await Post.find();
+      res.json({ success: true, data: result });
     } catch (error) {
       next(error);
     }
@@ -31,7 +32,25 @@ class PostController {
   // Update
   async update(req, res, next) {
     try {
-      res.json({});
+      const { id } = req.params;
+      const { title, description, category } = req.body;
+
+      if (!title || !description || !category) throw Error("Missing inputs!");
+
+      const result = await Post.findByIdAndUpdate(
+        id,
+        {
+          title,
+          description,
+          category,
+        },
+        { new: true }
+      );
+
+      res.json({
+        success: true,
+        message: `Post ${result.title} updated!`,
+      });
     } catch (error) {
       next(error);
     }
@@ -39,7 +58,13 @@ class PostController {
   // Delete
   async delete(req, res, next) {
     try {
-      res.json({});
+      const { id } = req.params;
+      const result = await Post.findByIdAndDelete(id);
+
+      res.json({
+        success: true,
+        message: `Post ${result.title} deleted!`,
+      });
     } catch (error) {
       next(error);
     }
