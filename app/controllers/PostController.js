@@ -10,6 +10,29 @@ class PostController {
       next(error);
     }
   }
+  // Get detail
+  async detail(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const result = await Post.findById(id).populate(
+        "likes",
+        "_id first_name last_name"
+      ).populate(
+        "dislikes",
+        "_id first_name last_name"
+      );
+
+      if (!result) throw Error("Post not found!");
+
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   // Add
   async add(req, res, next) {
     try {

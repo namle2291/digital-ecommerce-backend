@@ -18,7 +18,7 @@ app.use("/products", productRouter);
 app.use("/orders", orderRouter);
 app.use("/cart", cartRouter);
 app.use("/post-category", postCategoryRouter);
-app.use("/post", postRouter);
+app.use("/posts", postRouter);
 
 // Handler Error
 app.use(notFoundHandler);
