@@ -2,6 +2,7 @@ const User = require("../models/User");
 
 const { generateToken } = require("../jwt/jwt");
 const sendMail = require("../../config/mailer");
+const Order = require("../models/Order");
 
 class UserController {
   // Register
@@ -229,6 +230,21 @@ class UserController {
 
       res.json({
         message: "Your password updated!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Get order history
+  async orderHistory(req, res, next) {
+    try {
+      const { _id } = req.user;
+
+      const orders = await Order.find({ order_by: _id });
+
+      res.json({
+        success: true,
+        data: orders || [],
       });
     } catch (error) {
       next(error);

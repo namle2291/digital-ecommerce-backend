@@ -6,10 +6,9 @@ const isAdmin = require("../app/middlewares/isAdmin");
 const UserController = require("../app/controllers/UserController");
 
 router.get("/me", verifyToken, UserController.getCurrent);
-
+router.get("/order-history", verifyToken, UserController.orderHistory);
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
-
 router.put("/me", verifyToken, UserController.updateCurrentUser);
 // Admin
 router.post("/forgot-password", UserController.forgotPassword);
