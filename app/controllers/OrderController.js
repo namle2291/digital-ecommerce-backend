@@ -5,6 +5,35 @@ class OrderController {
   // Get ALl
   async getALl(req, res, next) {
     try {
+      const result = await Order.find().populate(
+        "order_by",
+        "_id first_name last_name"
+      );
+
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Get Detail
+  async detail(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const result = await Order.findById(id).populate(
+        "order_by",
+        "_id first_name last_name"
+      );
+
+      if (!result) throw Error("Order not found!");
+
+      res.json({
+        success: true,
+        data: result,
+      });
     } catch (error) {
       next(error);
     }
