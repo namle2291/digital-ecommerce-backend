@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const User = require("../models/User");
 
 const { generateToken } = require("../jwt/jwt");
@@ -17,12 +19,14 @@ class UserController {
       const user = await User.findOne({ email });
 
       if (user) {
-        throw new Error(`User with email ${email} exists!`);
+        return res.status(422).json({
+          message: `User with email ${email} exists!`,
+        });
       }
 
       await User({ first_name, last_name, phone, email, password }).save();
 
-      res.json({
+      return res.json({
         message: "Register success, please login!",
       });
     } catch (error) {
@@ -45,14 +49,17 @@ class UserController {
       if (user && (await user.isCorrectPassword(password))) {
         const payload = { _id: user._id, userType: user?.userType };
         const token = generateToken(payload);
+        const refresh_token = generateToken({ _id: user._id }, "1d");
+
+        await User.findByIdAndUpdate(user._id, { refresh_token });
+
         res.json({
           message: "Login success!",
           access_token: token,
+          refresh_token,
         });
       } else {
-        res.json({
-          message: "Login fail!",
-        });
+        throw Error("Your email and password does not match!");
       }
     } catch (error) {
       next(error);
@@ -64,7 +71,7 @@ class UserController {
       const { _id } = req.user;
 
       const user = await User.findOne({ _id }).select(
-        "-password -createdAt -updatedAt"
+        "-password -createdAt -updatedAt -password_reset_expires -password_reset_token"
       );
 
       if (!user) {
@@ -168,6 +175,29 @@ class UserController {
         message: user
           ? `User with email ${user.email} deleted!`
           : "Something went wrong!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // Reset Token
+  async refreshToken(req, res, next) {
+    try {
+      const { refresh_token } = req.body;
+
+      if (!refresh_token) {
+        throw Error("Token not found!");
+      }
+
+      const response = jwt.verify(refresh_token, process.env.JWT_SECRECT);
+
+      const user = await User.findOne({ _id: response._id, refresh_token });
+
+      return res.json({
+        success: user ? true : false,
+        new_token: user
+          ? generateToken({ _id: user._id, userType: user?.userType })
+          : "",
       });
     } catch (error) {
       next(error);

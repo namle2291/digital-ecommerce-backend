@@ -10,12 +10,7 @@ const port = 5000;
 require("dotenv").config();
 
 // Config
-app.use(
-  cors({
-    credentials: true,
-    origin: ["http://localhost:5000"],
-  })
-);
+app.use(cors());
 app.use(cookieParser());
 app.use(bodyParse.json());
 app.use(

@@ -9,6 +9,7 @@ router.get("/me", verifyToken, UserController.getCurrent);
 router.get("/order-history", verifyToken, UserController.orderHistory);
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
+router.post("/refresh-token", UserController.refreshToken);
 router.put("/me", verifyToken, UserController.updateCurrentUser);
 // Admin
 router.post("/forgot-password", UserController.forgotPassword);

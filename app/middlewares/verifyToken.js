@@ -6,14 +6,20 @@ function verifyToken(req, res, next) {
     const tokenString = token.split(" ")[1];
 
     jwt.verify(tokenString, process.env.JWT_SECRECT, function (err, decoded) {
-      if (err) next(err);
+      if (err) {
+        const error = Error("token expired!");
+        return res.status(401).json({
+          success: false,
+          mesage: "token expired!",
+        });
+      }
 
       const { _id, userType } = decoded;
       req.user = { _id, userType };
       next();
     });
   } else {
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
       // Yêu cầu xác thực
       mesage: "Require Authentication!!!",
