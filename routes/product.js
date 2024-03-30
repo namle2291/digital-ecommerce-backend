@@ -7,6 +7,7 @@ const uploadCloud = require("../config/cloudinary");
 const ProductController = require("../app/controllers/ProductController");
 
 router.get("/", ProductController.getAll);
+router.get("/insert", ProductController.insert);
 
 router.post(
   "/",

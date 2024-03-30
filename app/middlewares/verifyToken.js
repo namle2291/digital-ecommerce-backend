@@ -10,7 +10,7 @@ function verifyToken(req, res, next) {
         const error = Error("token expired!");
         return res.status(401).json({
           success: false,
-          mesage: "token expired!",
+          message: "token expired!",
         });
       }
 
@@ -22,7 +22,7 @@ function verifyToken(req, res, next) {
     return res.status(401).json({
       success: false,
       // Yêu cầu xác thực
-      mesage: "Require Authentication!!!",
+      message: "Require Authentication!!!",
     });
   }
 }

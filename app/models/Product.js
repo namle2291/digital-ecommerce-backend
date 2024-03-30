@@ -6,7 +6,7 @@ const productModal = new Schema(
     name: { type: String, require: true },
     thumbnail: { type: String, default: "default.png" },
     discount: { type: Number, default: 0 },
-    description: { type: String, require: true },
+    description: { type: Array, require: true },
     price: { type: Number, require: true },
     quantity: { type: Number, require: true, default: 0 },
     slug: { type: String, require: true, lowercase: true },
@@ -21,11 +21,12 @@ const productModal = new Schema(
     ],
     variants: [
       {
-        title: { type: String },
-        color: { type: String },
-        price: { type: Number },
-        quantity: { type: Number },
-        images: { type: Array },
+        label: { type: String },
+        variants: { type: Array },
+        // color: { type: String },
+        // price: { type: Number },
+        // quantity: { type: Number },
+        // images: { type: Array },
       },
     ],
     category_id: {
