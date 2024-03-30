@@ -22,11 +22,13 @@ const productModal = new Schema(
     variants: [
       {
         label: { type: String },
-        variants: { type: Array },
-        // color: { type: String },
-        // price: { type: Number },
-        // quantity: { type: Number },
-        // images: { type: Array },
+        variants: [
+          {
+            value: String,
+            quantity: Number,
+            price: Number,
+          },
+        ],
       },
     ],
     category_id: {

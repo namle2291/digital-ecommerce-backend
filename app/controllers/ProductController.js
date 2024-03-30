@@ -9,32 +9,47 @@ class ProductController {
   async getAll(req, res, next) {
     try {
       let queryObj = { ...req.query };
-      const excludedFields = ["sort", "limit", "page", "fields"];
+      const excludedFields = ["sort", "limit", "page", "fields", "color"];
       excludedFields.forEach((item) => delete queryObj[item]);
 
-      // handle lowercase key object
+      if (req.query.color) {
+        const colorArray = req.query.color
+          .split(",")
+          .map((item) => item.toUpperCase());
+
+        queryObj.variants = {
+          $elemMatch: {
+            label: "Color",
+            variants: {
+              $elemMatch: { value: { $in: colorArray } },
+            },
+          },
+        };
+      }
 
       let queryString = JSON.stringify(queryObj);
-
       queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => {
         return `$${match}`;
       });
 
       let query = Product.find(JSON.parse(queryString));
 
+      // Pagination
       const pageOptions = {
         page: req.query.page || 1,
         limit: req.query.limit || 10,
       };
 
-      if (req.query?.page) {
-        let skip = (pageOptions.page - 1) * pageOptions.limit;
-        query = query.skip(skip).limit(pageOptions.limit);
-      }
+      let skip = (pageOptions.page - 1) * pageOptions.limit;
+      query = query.skip(skip);
+      query = query.limit(pageOptions.limit);
 
+      // Sort
       if (req.query?.sort) {
         let sort = req.query?.sort;
         query = query.sort(sort);
+      } else {
+        query = query.sort("-createdAt");
       }
 
       const products = await query;
@@ -46,6 +61,28 @@ class ProductController {
         results: products.length,
         total_page,
         data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // test
+  async test(req, res, next) {
+    try {
+      const { color } = req.query;
+
+      const product = await Product.find({
+        variants: {
+          $elemMatch: {
+            label: "Color",
+            variants: { $elemMatch: { value: { $in: color.split(",") } } },
+          },
+        },
+      });
+
+      res.json({
+        result: product.length,
+        product,
       });
     } catch (error) {
       next(error);
@@ -130,7 +167,6 @@ class ProductController {
   // Seeding
   async insert(req, res, next) {
     try {
-      let categories = [];
       data?.map(async (product, index) => {
         const category = product.category[1];
         const getCate = await Category.findOne({ name: category });
@@ -155,7 +191,24 @@ class ProductController {
             trim: true,
           });
           data.images = product.images;
-          data.variants = product.variants;
+          //   variants: [
+          //     {
+          //       label: "Internal",
+          //       variants: ["32GB", "64GB", "128GB"],
+          //     },
+          // ]
+          data.variants = product.variants.map((item) => {
+            return {
+              label: item.label,
+              variants: item.variants.map((v) => {
+                return {
+                  value: v,
+                  quantity: Math.floor(Math.random() * 15),
+                  price: Math.floor(Math.random() * price) + 1000000,
+                };
+              }),
+            };
+          });
         }
 
         const newProduct = await new Product(data);
