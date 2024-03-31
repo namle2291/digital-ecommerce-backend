@@ -49,7 +49,8 @@ class UserController {
       if (user && (await user.isCorrectPassword(password))) {
         const payload = { _id: user._id, userType: user?.userType };
         const token = generateToken(payload);
-        const refresh_token = generateToken({ _id: user._id }, "1d");
+
+        const refresh_token = generateToken({ _id: user._id }, "24h");
 
         await User.findByIdAndUpdate(user._id, { refresh_token });
 

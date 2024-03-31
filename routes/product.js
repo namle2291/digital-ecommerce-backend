@@ -9,6 +9,7 @@ const ProductController = require("../app/controllers/ProductController");
 router.get("/", ProductController.getAll);
 router.get("/insert", ProductController.insert);
 router.get("/test", ProductController.test);
+router.get("/:id", ProductController.getDetail);
 
 router.post(
   "/",

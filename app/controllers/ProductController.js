@@ -66,6 +66,21 @@ class ProductController {
       next(error);
     }
   }
+  // Get product by id
+  async getDetail(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const products = await Product.findById(id);
+
+      res.json({
+        success: true,
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   // test
   async test(req, res, next) {
     try {
